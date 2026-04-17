@@ -4,10 +4,10 @@ import javax.swing.*;
 
 public class URL extends JFrame {
     private final int WINDOW_WIDTH = 800, WINDOW_HEIGHT = 400;
-    private JLabel urlLabel, recursiveLabel, iterativeLabel, cachedLabel;
+    private JComboBox urlLabel;
+	private JLabel recursiveLabel, iterativeLabel, cachedLabel;
     private JButton enterButton;
     private JPanel panel1, panel2;
-    private JTextField textField;
     private ButtonListener buttonListener;
 
     public static void main(String[] args){
@@ -25,16 +25,15 @@ public class URL extends JFrame {
 
     private void buildFrame(){
         buttonListener = new ButtonListener();
-        urlLabel = new JLabel("Enter URL");
+        String[] urlOptions = {"maps.Google.com", "docs.Google.com", "mail.google.com", "drive.google.com", "photos.google.com"};
+        urlLabel = new JComboBox<String>(urlOptions);
         recursiveLabel = new JLabel("Recursive DNS output time: ");
         iterativeLabel = new JLabel("Iterative DNS output time: ");
-        cachedLabel = new JLabel("Cached DNS output time: ");
-        textField = new JTextField(50);
+        cachedLabel = new JLabel("Enhanced DNS output time: ");
         panel1 = new JPanel();
         panel2 = new JPanel();
         enterButton = new JButton("Click to Enter");
         panel1.add(urlLabel);
-        panel1.add(textField);
         panel1.add(enterButton);
         panel2.setLayout(new GridLayout(3,1));
         panel2.add(recursiveLabel);
@@ -49,8 +48,15 @@ public class URL extends JFrame {
     }
     private class ButtonListener implements ActionListener{
         public void actionPerformed(ActionEvent e){
-            recursiveLabel.setText("Recursive DNS output time: ");
+        	String url = (String) urlLabel.getSelectedItem();
 
+            long recursiveTime = DNSSimulator.simulateRecursiveDNS(url);
+            long iterativeTime = DNSSimulator.simulateIterativeDNS(url);
+            long cachedTime = DNSSimulator.simulateEnhancedDNS(url);
+
+            recursiveLabel.setText("Recursive DNS output time: " + recursiveTime + " ms");
+            iterativeLabel.setText("Iterative DNS output time: " + iterativeTime + " ms");
+            cachedLabel.setText("Enhanced DNS output time: " + cachedTime + " ms");
         }
     }
 }
